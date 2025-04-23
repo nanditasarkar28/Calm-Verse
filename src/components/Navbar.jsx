@@ -11,7 +11,7 @@ const Navbar = () => {
     { title: 'Home', path: '/' },
     { title: 'Music Therapy', path: '/musicrecommend' },
     { title: 'Book Recommendations', path: '/books' },
-    { title: 'Mental Health Chat', path: '/chat' },
+    { title: 'Mental Health Support', path: '/chat' },
     { title: 'Journal', path: '/journal' },
   ];
 
