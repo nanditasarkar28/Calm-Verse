@@ -4,6 +4,8 @@ import MusicRecommend from './pages/MusicRecommend';
 import Layout from './components/Layout';
 import './App.css';
 import MentalHealthChat from './pages/MentalHealthChat';
+import JournalPage from './pages/Journal';
+// import JournalPage from './pages/JournalPage';
 
 function App() {
   return (
@@ -13,6 +15,8 @@ function App() {
           <Route index element={<Landing />} />
           <Route path="/musicrecommend" element={<MusicRecommend />} />
           <Route path="/chat" element={<MentalHealthChat/>}/>
+          <Route path='/journal' element={<JournalPage/>}/>
+          {/* <Route path='/journal' element={<JournalPage/>}/> */}
           {/* Future routes will be added here */}
           <Route path="*" element={<div className="h-screen flex items-center justify-center">Page not found</div>} />
         </Route>
