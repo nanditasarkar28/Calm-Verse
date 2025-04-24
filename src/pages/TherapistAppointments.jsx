@@ -571,3 +571,558 @@ const handleBookAppointment = async () => {
 };
 
 export default TherapistAppointments;
+
+
+
+// import { useState, useEffect } from 'react';
+// import { useNavigate, Link } from 'react-router-dom';
+// import { Calendar, Clock, Search, Filter, UserCheck, X } from 'lucide-react';
+
+// const TherapistAppointments = () => {
+//   const [therapists, setTherapists] = useState([]);
+//   const [selectedTherapist, setSelectedTherapist] = useState(null);
+//   const [availableSlots, setAvailableSlots] = useState([]);
+//   const [selectedSlot, setSelectedSlot] = useState(null);
+//   const [specializations, setSpecializations] = useState([]);
+//   const [filteredSpecialization, setFilteredSpecialization] = useState('');
+//   const [filteredLanguage, setFilteredLanguage] = useState('');
+//   const [userAppointments, setUserAppointments] = useState([]);
+//   const [isLoading, setIsLoading] = useState(true);
+//   const [bookingSuccess, setBookingSuccess] = useState(false);
+//   const navigate = useNavigate();
+  
+//   // Mock user ID for demonstration
+//   const userId = "user123";
+  
+//   useEffect(() => {
+//     // Fetch therapists on component mount
+//     fetchTherapists();
+//     fetchSpecializations();
+//     fetchUserAppointments();
+//   }, []);
+  
+//   const fetchTherapists = async () => {
+//     setIsLoading(true);
+//     try {
+//       let url = '/therapists/';
+//       if (filteredSpecialization || filteredLanguage) {
+//         url += '?';
+//         if (filteredSpecialization) {
+//           url += `specialization=${encodeURIComponent(filteredSpecialization)}`;
+//         }
+//         if (filteredLanguage) {
+//           url += filteredSpecialization ? `&language=${encodeURIComponent(filteredLanguage)}` : `language=${encodeURIComponent(filteredLanguage)}`;
+//         }
+//       }
+      
+//       // For demo purposes, simulating the API response with the data from the code
+//       const response = {
+//         ok: true,
+//         json: () => Promise.resolve([
+//           {
+//             _id: "t1",
+//             name: "Dr. Sarah Johnson",
+//             specializations: ["Anxiety", "Depression", "Stress Management"],
+//             experience_years: 12,
+//             education: "Ph.D in Clinical Psychology, Stanford University",
+//             bio: "Dr. Johnson specializes in cognitive behavioral therapy and mindfulness techniques to help clients overcome anxiety and depression.",
+//             photo_url: "/api/placeholder/200/200",
+//             hourly_rate: 120.00,
+//             languages: ["English", "Spanish"]
+//           },
+//           {
+//             _id: "t2",
+//             name: "Dr. Michael Chen",
+//             specializations: ["Trauma", "PTSD", "Family Therapy"],
+//             experience_years: 15,
+//             education: "Psy.D in Clinical Psychology, Columbia University",
+//             bio: "Dr. Chen has extensive experience helping clients process trauma and rebuild their lives using evidence-based approaches.",
+//             photo_url: "/api/placeholder/200/200",
+//             hourly_rate: 135.00,
+//             languages: ["English", "Mandarin"]
+//           },
+//           {
+//             _id: "t3",
+//             name: "Maya Rodriguez, LMFT",
+//             specializations: ["Relationships", "Couples Therapy", "Self-Esteem"],
+//             experience_years: 8,
+//             education: "M.S. in Marriage and Family Therapy, NYU",
+//             bio: "Maya helps couples and individuals navigate relationship challenges and build healthier connections.",
+//             photo_url: "/api/placeholder/200/200",
+//             hourly_rate: 100.00,
+//             languages: ["English", "Spanish"]
+//           }
+//         ])
+//       };
+      
+//       const data = await response.json();
+//       setTherapists(data);
+//     } catch (error) {
+//       console.error("Error fetching therapists:", error);
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+  
+//   const fetchSpecializations = async () => {
+//     try {
+//       // For demo purposes, simulating the API response
+//       const response = {
+//         ok: true,
+//         json: () => Promise.resolve({
+//           specializations: [
+//             "Anxiety", 
+//             "Depression", 
+//             "Trauma", 
+//             "PTSD", 
+//             "Family Therapy", 
+//             "Relationships", 
+//             "Couples Therapy", 
+//             "Self-Esteem", 
+//             "Stress Management", 
+//             "Addiction Recovery"
+//           ]
+//         })
+//       };
+      
+//       const data = await response.json();
+//       setSpecializations(data.specializations);
+//     } catch (error) {
+//       console.error("Error fetching specializations:", error);
+//     }
+//   };
+  
+//   const fetchUserAppointments = async () => {
+//     try {
+//       // For demo purposes, simulating the API response
+//       const response = {
+//         ok: true,
+//         json: () => Promise.resolve([
+//           {
+//             _id: "a1",
+//             appointment_id: "app123",
+//             therapist_name: "Dr. Sarah Johnson",
+//             date: new Date().toISOString(),
+//             start_time: new Date(new Date().setHours(10, 0, 0)).toISOString(),
+//             end_time: new Date(new Date().setHours(11, 0, 0)).toISOString(),
+//             status: "scheduled"
+//           }
+//         ])
+//       };
+      
+//       const data = await response.json();
+//       setUserAppointments(data);
+//     } catch (error) {
+//       console.error("Error fetching user appointments:", error);
+//     }
+//   };
+  
+//   const handleTherapistSelect = async (therapist) => {
+//     setSelectedTherapist(therapist);
+//     try {
+//       // For demo purposes, simulating the API response
+//       const tomorrow = new Date();
+//       tomorrow.setDate(tomorrow.getDate() + 1);
+      
+//       const mockSlots = [];
+//       // Generate 5 slots for demo
+//       for (let i = 9; i < 14; i++) {
+//         const startTime = new Date(tomorrow);
+//         startTime.setHours(i, 0, 0, 0);
+//         const endTime = new Date(tomorrow);
+//         endTime.setHours(i + 1, 0, 0, 0);
+        
+//         mockSlots.push({
+//           start_time: startTime.toISOString(),
+//           end_time: endTime.toISOString()
+//         });
+//       }
+      
+//       const response = {
+//         ok: true,
+//         json: () => Promise.resolve({
+//           ...therapist,
+//           available_slots: mockSlots
+//         })
+//       };
+      
+//       const data = await response.json();
+//       setAvailableSlots(data.available_slots);
+//     } catch (error) {
+//       console.error("Error fetching therapist details:", error);
+//     }
+//   };
+  
+//   const handleSlotSelect = (slot) => {
+//     setSelectedSlot(slot);
+//   };
+  
+//   const handleBookAppointment = async () => {
+//     if (!selectedTherapist || !selectedSlot) return;
+    
+//     try {
+//       // For demo purposes, simulating the API call
+//       const appointmentData = {
+//         user_id: userId,
+//         therapist_id: selectedTherapist._id,
+//         date: new Date(selectedSlot.start_time),
+//         start_time: new Date(selectedSlot.start_time),
+//         end_time: new Date(selectedSlot.end_time),
+//         notes: ""
+//       };
+      
+//       console.log("Booking appointment:", appointmentData);
+      
+//       // Simulate successful booking
+//       setBookingSuccess(true);
+      
+//       // Refresh user appointments
+//       setTimeout(() => {
+//         fetchUserAppointments();
+//         setSelectedTherapist(null);
+//         setSelectedSlot(null);
+//         setBookingSuccess(false);
+//       }, 3000);
+//     } catch (error) {
+//       console.error("Error booking appointment:", error);
+//     }
+//   };
+  
+//   const handleCancelAppointment = async (appointmentId) => {
+//     try {
+//       console.log("Cancelling appointment:", appointmentId);
+      
+//       // Simulate successful cancellation
+//       const updatedAppointments = userAppointments.map(app => 
+//         app.appointment_id === appointmentId 
+//           ? {...app, status: "cancelled"} 
+//           : app
+//       );
+      
+//       setUserAppointments(updatedAppointments);
+//     } catch (error) {
+//       console.error("Error cancelling appointment:", error);
+//     }
+//   };
+  
+//   const formatTime = (dateString) => {
+//     const date = new Date(dateString);
+//     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+//   };
+  
+//   const formatDate = (dateString) => {
+//     const date = new Date(dateString);
+//     return date.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' });
+//   };
+  
+//   return (
+//     <div className="w-full bg-gradient-to-b from-white to-indigo-50 min-h-screen">
+//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+//         {/* Header */}
+//         <div className="text-center mb-12">
+//           <h1 className="text-4xl font-bold text-indigo-900 mb-4">Find Your Mental Health Partner</h1>
+//           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+//             Connect with professional therapists and schedule sessions to support your mental wellness journey.
+//           </p>
+//         </div>
+        
+//         {bookingSuccess && (
+//           <div className="mb-8 bg-green-50 border border-green-200 rounded-lg p-4 flex items-center">
+//             <div className="flex-shrink-0 text-green-500">
+//               <UserCheck className="h-5 w-5" />
+//             </div>
+//             <div className="ml-3">
+//               <p className="text-sm font-medium text-green-800">
+//                 Your appointment has been successfully booked!
+//               </p>
+//             </div>
+//             <div className="ml-auto pl-3">
+//               <button
+//                 className="inline-flex text-gray-400 hover:text-gray-500"
+//                 onClick={() => setBookingSuccess(false)}
+//               >
+//                 <X className="h-5 w-5" />
+//               </button>
+//             </div>
+//           </div>
+//         )}
+        
+//         {/* Main content */}
+//         <div className="flex flex-col lg:flex-row gap-8">
+//           {/* Left column - Therapist search and list */}
+//           <div className="lg:w-2/3">
+//             <div className="bg-white rounded-xl shadow-md p-6 mb-8">
+//               <h2 className="text-2xl font-semibold text-indigo-900 mb-4">Find a Therapist</h2>
+              
+//               {/* Search and filters */}
+//               <div className="mb-6">
+//                 <div className="flex flex-wrap gap-4">
+//                   <div className="w-full md:w-auto flex-1">
+//                     <label className="block text-sm font-medium text-gray-700 mb-1">
+//                       Specialization
+//                     </label>
+//                     <div className="relative">
+//                       <select
+//                         className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-md"
+//                         value={filteredSpecialization}
+//                         onChange={(e) => setFilteredSpecialization(e.target.value)}
+//                       >
+//                         <option value="">All Specializations</option>
+//                         {specializations.map((spec) => (
+//                           <option key={spec} value={spec}>{spec}</option>
+//                         ))}
+//                       </select>
+//                       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+//                         <Filter className="h-4 w-4" />
+//                       </div>
+//                     </div>
+//                   </div>
+                  
+//                   <div className="w-full md:w-auto flex-1">
+//                     <label className="block text-sm font-medium text-gray-700 mb-1">
+//                       Language
+//                     </label>
+//                     <div className="relative">
+//                       <select
+//                         className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-md"
+//                         value={filteredLanguage}
+//                         onChange={(e) => setFilteredLanguage(e.target.value)}
+//                       >
+//                         <option value="">All Languages</option>
+//                         <option value="English">English</option>
+//                         <option value="Spanish">Spanish</option>
+//                         <option value="Mandarin">Mandarin</option>
+//                         <option value="Hindi">Hindi</option>
+//                       </select>
+//                       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+//                         <Filter className="h-4 w-4" />
+//                       </div>
+//                     </div>
+//                   </div>
+                  
+//                   <div className="w-full md:w-auto flex items-end">
+//                     <button
+//                       className="w-full md:w-auto px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-md flex items-center justify-center"
+//                       onClick={fetchTherapists}
+//                     >
+//                       <Search className="h-4 w-4 mr-2" />
+//                       Search
+//                     </button>
+//                   </div>
+//                 </div>
+//               </div>
+              
+//               {/* Therapists list */}
+//               <div className="space-y-6">
+//                 {isLoading ? (
+//                   <div className="text-center py-8">
+//                     <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-indigo-600 border-r-transparent"></div>
+//                     <p className="mt-2 text-gray-600">Loading therapists...</p>
+//                   </div>
+//                 ) : therapists.length === 0 ? (
+//                   <div className="text-center py-8">
+//                     <p className="text-gray-600">No therapists found matching your criteria.</p>
+//                   </div>
+//                 ) : (
+//                   therapists.map((therapist) => (
+//                     <div 
+//                       key={therapist._id}
+//                       className={`border rounded-lg overflow-hidden transition-all ${
+//                         selectedTherapist?._id === therapist._id
+//                           ? 'border-indigo-500 bg-indigo-50 shadow-md'
+//                           : 'border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/30'
+//                       }`}
+//                     >
+//                       <div className="p-6">
+//                         <div className="flex flex-col md:flex-row gap-6">
+//                           <div className="md:w-1/4 flex-shrink-0">
+//                             <img 
+//                               src={therapist.photo_url || "/api/placeholder/150/150"} 
+//                               alt={therapist.name}
+//                               className="w-full rounded-lg object-cover aspect-square"
+//                             />
+//                           </div>
+//                           <div className="md:w-3/4">
+//                             <h3 className="text-xl font-semibold text-indigo-900 mb-2">{therapist.name}</h3>
+                            
+//                             <div className="mb-2 flex flex-wrap gap-2">
+//                               {therapist.specializations.map((spec, idx) => (
+//                                 <span 
+//                                   key={idx} 
+//                                   className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
+//                                 >
+//                                   {spec}
+//                                 </span>
+//                               ))}
+//                             </div>
+                            
+//                             <p className="text-sm text-gray-600 mb-3">
+//                               <span className="font-medium">Experience:</span> {therapist.experience_years} years
+//                             </p>
+                            
+//                             <p className="text-sm text-gray-600 mb-3">
+//                               <span className="font-medium">Education:</span> {therapist.education}
+//                             </p>
+                            
+//                             <p className="text-sm text-gray-600 mb-4">
+//                               <span className="font-medium">Languages:</span> {therapist.languages.join(", ")}
+//                             </p>
+                            
+//                             <div className="flex items-center justify-between">
+//                               <p className="text-lg font-bold text-indigo-600">${therapist.hourly_rate}/hour</p>
+//                               <button
+//                                 className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-md"
+//                                 onClick={() => handleTherapistSelect(therapist)}
+//                               >
+//                                 View Availability
+//                               </button>
+//                             </div>
+//                           </div>
+//                         </div>
+//                       </div>
+                      
+//                       {selectedTherapist?._id === therapist._id && (
+//                         <div className="border-t border-indigo-200 bg-indigo-50 p-6">
+//                           <h4 className="text-lg font-medium text-indigo-900 mb-4">
+//                             Available Appointments
+//                           </h4>
+                          
+//                           {availableSlots.length === 0 ? (
+//                             <p className="text-gray-600 text-center py-4">
+//                               No available appointments found for this therapist.
+//                             </p>
+//                           ) : (
+//                             <div>
+//                               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+//                                 {availableSlots.map((slot, idx) => (
+//                                   <button
+//                                     key={idx}
+//                                     className={`p-3 border rounded-md text-center transition-colors ${
+//                                       selectedSlot === slot
+//                                         ? 'bg-indigo-600 text-white border-indigo-600'
+//                                         : 'bg-white text-gray-700 border-gray-200 hover:border-indigo-300'
+//                                     }`}
+//                                     onClick={() => handleSlotSelect(slot)}
+//                                   >
+//                                     <div className="flex items-center justify-center mb-1">
+//                                       <Calendar className="h-4 w-4 mr-1" />
+//                                       <span className="text-sm">
+//                                         {formatDate(slot.start_time)}
+//                                       </span>
+//                                     </div>
+//                                     <div className="flex items-center justify-center">
+//                                       <Clock className="h-4 w-4 mr-1" />
+//                                       <span className="text-sm">
+//                                         {formatTime(slot.start_time)} - {formatTime(slot.end_time)}
+//                                       </span>
+//                                     </div>
+//                                   </button>
+//                                 ))}
+//                               </div>
+                              
+//                               {selectedSlot && (
+//                                 <div className="mt-6 text-center">
+//                                   <button
+//                                     className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md"
+//                                     onClick={handleBookAppointment}
+//                                   >
+//                                     Book Appointment
+//                                   </button>
+//                                 </div>
+//                               )}
+//                             </div>
+//                           )}
+//                         </div>
+//                       )}
+//                     </div>
+//                   ))
+//                 )}
+//               </div>
+//             </div>
+//           </div>
+          
+//           {/* Right column - User appointments */}
+//           <div className="lg:w-1/3">
+//             <div className="bg-white rounded-xl shadow-md p-6 sticky top-4">
+//               <h2 className="text-2xl font-semibold text-indigo-900 mb-4">Your Appointments</h2>
+              
+//               {userAppointments.length === 0 ? (
+//                 <div className="text-center py-8">
+//                   <p className="text-gray-600">You don't have any appointments scheduled.</p>
+//                 </div>
+//               ) : (
+//                 <div className="space-y-4">
+//                   {userAppointments.map((appointment) => (
+//                     <div 
+//                       key={appointment.appointment_id}
+//                       className={`border rounded-lg p-4 ${
+//                         appointment.status === 'scheduled' 
+//                           ? 'border-indigo-200 bg-indigo-50/50' 
+//                           : 'border-gray-200 bg-gray-50'
+//                       }`}
+//                     >
+//                       <div className="flex justify-between items-start">
+//                         <h3 className="font-medium text-indigo-900">
+//                           {appointment.therapist_name}
+//                         </h3>
+//                         <span 
+//                           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+//                             ${appointment.status === 'scheduled' 
+//                               ? 'bg-green-100 text-green-800' 
+//                               : 'bg-gray-100 text-gray-800'
+//                             }`}
+//                         >
+//                           {appointment.status}
+//                         </span>
+//                       </div>
+                      
+//                       <div className="mt-2 space-y-1 text-sm text-gray-600">
+//                         <div className="flex items-center">
+//                           <Calendar className="h-4 w-4 mr-2" />
+//                           {formatDate(appointment.date)}
+//                         </div>
+//                         <div className="flex items-center">
+//                           <Clock className="h-4 w-4 mr-2" />
+//                           {formatTime(appointment.start_time)} - {formatTime(appointment.end_time)}
+//                         </div>
+//                       </div>
+                      
+//                       {appointment.status === 'scheduled' && (
+//                         <div className="mt-4">
+//                           <button
+//                             className="w-full px-3 py-2 border border-red-300 text-red-600 hover:bg-red-50 font-medium rounded-md text-sm"
+//                             onClick={() => handleCancelAppointment(appointment.appointment_id)}
+//                           >
+//                             Cancel Appointment
+//                           </button>
+//                         </div>
+//                       )}
+//                     </div>
+//                   ))}
+//                 </div>
+//               )}
+              
+//               <div className="mt-8 pt-6 border-t border-gray-200">
+//                 <h3 className="font-medium text-indigo-900 mb-2">Need Help?</h3>
+//                 <p className="text-sm text-gray-600 mb-4">
+//                   If you need assistance with appointment scheduling or have questions about our therapists, please contact our support team.
+//                 </p>
+//                 <Link
+//                   to="/contact"
+//                   className="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center"
+//                 >
+//                   Contact Support
+//                   <svg className="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+//                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+//                   </svg>
+//                 </Link>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default TherapistAppointments;

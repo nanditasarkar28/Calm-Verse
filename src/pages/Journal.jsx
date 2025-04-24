@@ -264,7 +264,7 @@ const Journal = () => {
               onClick={fetchJournalData}
               className="flex items-center text-indigo-600 hover:text-indigo-800"
             >
-              <RefreshCw className="h-5 w-5 mr-1" />
+              <RefreshCw className="h-5 w-5 mr-1"/>
               Refresh
             </button>
           </div>
