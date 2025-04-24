@@ -12,7 +12,7 @@ const MusicRecommend = () => {
   const [recommendations, setRecommendations] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(null);+
 
   // Fetch all songs on component mount
   useEffect(() => {
@@ -88,7 +88,7 @@ const MusicRecommend = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Page Header */}
       <div className="text-center mb-12">
-        <h1 className="text-3xl font-bold text-indigo-900">Music Therapy</h1>
+        <h1 className="text-3xl font-bold text-black-900">Music Therapy</h1>
         <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
           Discover music that soothes your mind and uplifts your spirit. Our recommendation system helps you find the perfect soundtrack for your mood and mindfulness practice.
         </p>
@@ -97,15 +97,15 @@ const MusicRecommend = () => {
       {/* Search Section */}
       <div className="mb-12 max-w-xl mx-auto">
         <div className="relative">
-          <div className="flex items-center bg-white rounded-lg px-4 py-3 shadow-md">
-            <Search className="h-5 w-5 text-gray-400 mr-2" />
+          <div className="flex items-center bg--900 rounded-lg px-4 py-3 shadow-md">
+            <Search className="h-5 w-5 text-pink-400 mr-2" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search for a song..."
-              className="w-full bg-transparent border-none focus:outline-none text-gray-800 placeholder-gray-400"
-            />
+              
+              className="w-full bg-transparent border-none focus:outline text-gray-900 placeholder-grey-400" />
           </div>
           
           {/* Dropdown */}
@@ -183,9 +183,9 @@ const MusicRecommend = () => {
       {/* Music Therapy Benefits */}
       {!isLoading && recommendations.length === 0 && (
         <div className="mt-16">
-          <h2 className="text-2xl font-bold text-indigo-900 text-center mb-8">Benefits of Music Therapy</h2>
+          <h2 className="text-2xl font-bold text-black-900 text-center mb-8">Benefits of Music Therapy</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="bg-gradient-to-t from-transparent to-purple-200 p-6 rounded-lg shadow-md">
               <div className="text-indigo-600 mb-4">
                 <Disc className="h-10 w-10" />
               </div>
@@ -194,7 +194,9 @@ const MusicRecommend = () => {
                 Listening to calming music can lower cortisol levels and help manage stress and anxiety.
               </p>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow-md">
+
+
+            <div className="bg-gradient-to-t from-transparent to-yellow-200 p-6 rounded-lg shadow-md">
               <div className="text-purple-600 mb-4">
                 <Radio className="h-10 w-10" />
               </div>
@@ -203,7 +205,7 @@ const MusicRecommend = () => {
                 Music stimulates dopamine release, helping to elevate mood and create positive emotions.
               </p>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="bg-gradient-to-t from-transparent to-pink-200 p-6 rounded-lg shadow-md">
               <div className="text-blue-600 mb-4">
                 <Music className="h-10 w-10" />
               </div>
