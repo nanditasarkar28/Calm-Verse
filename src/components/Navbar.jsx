@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Flower } from 'lucide-react';  // Changed from Lotus to Flower
-
+import  logo from '../assets/MH-logo.png'; // Assuming you have a logo image
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
@@ -25,10 +25,10 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <Link to="/" className="flex items-center">
-              <Flower className="h-8 w-8 text-indigo-600" />  {/* Changed from Lotus to Flower */}
-              <span className="ml-2 text-xl font-semibold text-indigo-900">CalmVerse</span>
-            </Link>
+          <Link to="/" className="flex items-center gap-2">
+        <img src={logo} alt="Mental Health Logo" className="h-17 w-12 object-contain" />
+        <span className="text-lg font-semibold text-purple-700">CalmVerse</span>
+      </Link>
           </div>
           
           <div className="hidden md:block">
