@@ -5,6 +5,7 @@ import Layout from './components/Layout';
 import './App.css';
 import MentalHealthChat from './pages/MentalHealthChat';
 import JournalPage from './pages/Journal';
+import TherapistAppointments from './pages/TherapistAppointments';
 // import JournalPage from './pages/JournalPage';
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Landing />} />
+          <Route path='/therapists' element={<TherapistAppointments/>}/>
           <Route path="/musicrecommend" element={<MusicRecommend />} />
           <Route path="/chat" element={<MentalHealthChat/>}/>
           <Route path='/journal' element={<JournalPage/>}/>

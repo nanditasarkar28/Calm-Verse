@@ -9,6 +9,7 @@ const Navbar = () => {
 
   const menuItems = [
     { title: 'Home', path: '/' },
+    {title:'Therapists',path:'/therapists'},
     { title: 'Music Therapy', path: '/musicrecommend' },
     { title: 'Book Recommendations', path: '/books' },
     { title: 'Mental Health Support', path: '/chat' },
