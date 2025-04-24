@@ -449,106 +449,119 @@ import React, { useState, useEffect } from 'react';
 import { Book, Search, ArrowRight } from 'lucide-react';
 import axios from 'axios';
 
-// Mock data for development when API is not available
-const MOCK_BOOKS = [
-  { id: 1, title: "The Alchemist" },
-  { id: 2, title: "Atomic Habits" },
-  { id: 3, title: "Thinking, Fast and Slow" },
-  { id: 4, title: "Man's Search for Meaning" },
-  { id: 5, title: "Mindfulness in Plain English" },
-  { id: 6, title: "The Power of Now" },
-  { id: 7, title: "Feeling Good" },
-  { id: 8, title: "The Body Keeps the Score" }
-];
-
-const MOCK_RECOMMENDATIONS = [
-  { title: "The Four Agreements", image_url: "https://m.media-amazon.com/images/I/91rR9gMuOVL.jpg" },
-  { title: "Daring Greatly", image_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQeFawuG6tASf3518NjhM5sQyfnDIHnOOywcQ&s" },
-  { title: "The Untethered Soul", image_url: "https://m.media-amazon.com/images/I/51jaiwUXqVL._SL500_.jpg" },
-  { title: "The Happiness Trap", image_url: "https://m.media-amazon.com/images/I/71kCQXpBqlL._AC_UF1000,1000_QL80_.jpg" }
-];
-
-// Set this to true to use mock data, false to use API
-const USE_MOCK_DATA = true;
-
 const BookRecommender = () => {
+  const [searchTerm, setSearchTerm] = useState('');
   const [books, setBooks] = useState([]);
-  const [selectedBook, setSelectedBook] = useState('');
+  const [selectedBook, setSelectedBook] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [loadingBooks, setLoadingBooks] = useState(true);
+  const [loadingBooks, setLoadingBooks] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchBooks = async () => {
-      if (USE_MOCK_DATA) {
-        // Use mock data instead of API call
-        setBooks(MOCK_BOOKS);
-        setLoadingBooks(false);
-        return;
+  // Function to search for books using Google Books API
+  const searchBooks = async () => {
+    if (!searchTerm.trim()) return;
+    
+    try {
+      setLoadingBooks(true);
+      setError(null);
+      
+      const response = await axios.get(
+        `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(searchTerm)}&maxResults=10`
+      );
+      
+      if (response.data && response.data.items) {
+        const formattedBooks = response.data.items.map(book => ({
+          id: book.id,
+          title: book.volumeInfo.title,
+          author: book.volumeInfo.authors ? book.volumeInfo.authors[0] : 'Unknown Author',
+          thumbnail: book.volumeInfo.imageLinks?.thumbnail || null,
+          publishedDate: book.volumeInfo.publishedDate,
+          categories: book.volumeInfo.categories || []
+        }));
+        
+        setBooks(formattedBooks);
+      } else {
+        setBooks([]);
       }
+    } catch (err) {
+      console.error("Error searching books:", err);
+      setError('Failed to search books. Please try again later.');
+    } finally {
+      setLoadingBooks(false);
+    }
+  };
 
-      try {
-        setLoadingBooks(true);
-        // Note: Using a full URL here instead of a relative path
-        const response = await axios.get('http://localhost:8000/api/books');
-        
-        console.log("Books API response:", response.data);
-        
-        // Handle different response structures
-        if (response.data && response.data.books) {
-          setBooks(response.data.books);
-        } else if (Array.isArray(response.data)) {
-          setBooks(response.data);
-        } else {
-          console.error("Unexpected data format:", response.data);
-          setError("Received unexpected data format from server");
-        }
-        
-        setLoadingBooks(false);
-      } catch (err) {
-        console.error("Error fetching books:", err);
-        setError('Failed to load books. Please try again later.');
-        setLoadingBooks(false);
-      }
-    };
-
-    fetchBooks();
-  }, []);
-
-  const handleGetRecommendations = async () => {
+  // Function to get recommendations based on the selected book
+  const getRecommendations = async () => {
     if (!selectedBook) return;
     
     try {
       setLoading(true);
-      setRecommendations([]);
+      setError(null);
       
-      if (USE_MOCK_DATA) {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 800));
-        setRecommendations(MOCK_RECOMMENDATIONS);
-        setLoading(false);
-        return;
+      // Use Google Books API to search for books similar to the selected book
+      // We'll use categories and author as search parameters
+      const searchParams = [];
+      
+      if (selectedBook.categories && selectedBook.categories.length > 0) {
+        searchParams.push(`subject:${encodeURIComponent(selectedBook.categories[0])}`);
       }
       
-      const response = await axios.get(`http://localhost:8000/api/books/recommend/${encodeURIComponent(selectedBook)}`);
-      console.log("Recommendations response:", response.data);
+      // Add a keyword from the title (excluding common words)
+      const titleWords = selectedBook.title.split(' ')
+        .filter(word => word.length > 3 && !['the', 'and', 'that', 'with'].includes(word.toLowerCase()));
       
-      if (response.data && response.data.recommended_books) {
-        setRecommendations(response.data.recommended_books);
-      } else if (Array.isArray(response.data)) {
-        setRecommendations(response.data);
+      if (titleWords.length > 0) {
+        searchParams.push(encodeURIComponent(titleWords[0]));
+      }
+      
+      const searchQuery = searchParams.join('+');
+      const response = await axios.get(
+        `https://www.googleapis.com/books/v1/volumes?q=${searchQuery}&maxResults=8`
+      );
+      
+      if (response.data && response.data.items) {
+        // Filter out the selected book from recommendations
+        const filteredRecommendations = response.data.items
+          .filter(book => book.id !== selectedBook.id)
+          .map(book => ({
+            id: book.id,
+            title: book.volumeInfo.title,
+            author: book.volumeInfo.authors ? book.volumeInfo.authors[0] : 'Unknown Author',
+            image_url: book.volumeInfo.imageLinks?.thumbnail || null,
+            description: book.volumeInfo.description ? 
+              book.volumeInfo.description.substring(0, 100) + '...' : 
+              'No description available'
+          }));
+        
+        setRecommendations(filteredRecommendations);
       } else {
-        console.error("Unexpected recommendations format:", response.data);
-        setError("Received unexpected data format from server");
+        setRecommendations([]);
       }
-      
-      setLoading(false);
     } catch (err) {
       console.error("Error getting recommendations:", err);
       setError('Failed to get recommendations. Please try again later.');
+    } finally {
       setLoading(false);
     }
+  };
+
+  // Handle search input submission
+  const handleSearch = (e) => {
+    e.preventDefault();
+    searchBooks();
+  };
+
+  // Handle book selection
+  const handleSelectBook = (book) => {
+    setSelectedBook(book);
+    setRecommendations([]);
+  };
+
+  // Handle getting recommendations
+  const handleGetRecommendations = () => {
+    getRecommendations();
   };
 
   return (
@@ -564,49 +577,75 @@ const BookRecommender = () => {
         </p>
       </section>
 
-      {/* Selection Section */}
+      {/* Search Section */}
       <section className="bg-purple-50 rounded-2xl p-8 shadow-lg mb-12">
         <h2 className="text-2xl font-semibold text-gray-800 mb-6">Find Your Next Read</h2>
         
         <div className="max-w-xl mx-auto">
-          <div className="mb-6">
-            <label htmlFor="book-select" className="block text-sm font-medium text-gray-700 mb-2">
-              Select a book you enjoyed
+          {/* Search form */}
+          <form onSubmit={handleSearch} className="mb-8">
+            <label htmlFor="book-search" className="block text-sm font-medium text-gray-700 mb-2">
+              Search for books
             </label>
             <div className="flex flex-col sm:flex-row gap-4">
-              {loadingBooks ? (
-                <div className="flex-1 p-3 border border-gray-300 rounded-lg bg-gray-50">
-                  Loading books...
-                </div>
-              ) : books.length > 0 ? (
-                <select
-                  id="book-select"
-                  value={selectedBook}
-                  onChange={(e) => setSelectedBook(e.target.value)}
-                  className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                >
-                  <option value="">Select a book...</option>
-                  {books.map((book) => (
-                    <option key={book.id || `book-${Math.random()}`} value={book.title || book}>
-                      {book.title || book}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <div className="flex-1 p-3 border border-gray-300 rounded-lg bg-gray-50 text-red-500">
-                  No books available. {error ? error : "Please try refreshing the page."}
-                </div>
-              )}
+              <input
+                type="text"
+                id="book-search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Enter book title, author, or genre..."
+                className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              />
               <button
-                onClick={handleGetRecommendations}
-                disabled={!selectedBook || loading || loadingBooks}
+                type="submit"
+                disabled={!searchTerm.trim() || loadingBooks}
                 className={`px-6 py-3 font-medium rounded-lg shadow-md transition-colors flex items-center justify-center ${
-                  !selectedBook || loading || loadingBooks 
+                  !searchTerm.trim() || loadingBooks 
                   ? "bg-gray-400 text-white cursor-not-allowed" 
                   : "bg-purple-600 hover:bg-purple-700 text-white"
                 }`}
               >
-                {loading ? 'Loading...' : (
+                {loadingBooks ? 'Searching...' : (
+                  <>
+                    Search
+                    <Search className="ml-2 h-5 w-5" />
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+
+          {/* Selected book section */}
+          {selectedBook && (
+            <div className="mb-6">
+              <h3 className="text-lg font-medium text-gray-800 mb-3">Selected Book:</h3>
+              <div className="bg-white p-4 rounded-lg shadow flex items-center">
+                {selectedBook.thumbnail ? (
+                  <img 
+                    src={selectedBook.thumbnail} 
+                    alt={selectedBook.title} 
+                    className="h-20 w-16 object-cover mr-4"
+                  />
+                ) : (
+                  <div className="h-20 w-16 bg-gray-200 flex items-center justify-center mr-4">
+                    <Book className="h-8 w-8 text-gray-400" />
+                  </div>
+                )}
+                <div>
+                  <div className="font-medium">{selectedBook.title}</div>
+                  <div className="text-sm text-gray-600">{selectedBook.author}</div>
+                </div>
+              </div>
+              <button
+                onClick={handleGetRecommendations}
+                disabled={loading}
+                className={`mt-4 px-6 py-3 font-medium rounded-lg shadow-md transition-colors flex items-center justify-center w-full ${
+                  loading 
+                  ? "bg-gray-400 text-white cursor-not-allowed" 
+                  : "bg-purple-600 hover:bg-purple-700 text-white"
+                }`}
+              >
+                {loading ? 'Finding Recommendations...' : (
                   <>
                     Get Recommendations
                     <ArrowRight className="ml-2 h-5 w-5" />
@@ -614,15 +653,51 @@ const BookRecommender = () => {
                 )}
               </button>
             </div>
-            
-            {/* Development mode notice */}
-            {USE_MOCK_DATA && (
-              <div className="mt-4 text-sm p-2 bg-yellow-50 border border-yellow-200 rounded-md text-yellow-700">
-                <strong>Development Mode:</strong> Using mock data instead of API calls.
-              </div>
-            )}
-          </div>
+          )}
         </div>
+
+        {/* Search Results */}
+        {books.length > 0 && !selectedBook && (
+        <div className="mt-8">
+            <h3 className="text-lg font-medium text-gray-800 mb-4">Search Results:</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {books.map((book) => (
+                <div 
+                key={book.id}
+                onClick={() => handleSelectBook(book)}
+                className="bg-white p-6 rounded-lg shadow-md cursor-pointer hover:shadow-lg transition-all duration-300 flex flex-col items-center"
+                >
+                <div className="flex justify-center mb-4 h-56 w-full">
+                    {book.thumbnail ? (
+                    <img 
+                        src={book.thumbnail.replace('http:', 'https:')} 
+                        alt={book.title} 
+                        className="h-56 object-contain"
+                    />
+                    ) : (
+                    <div className="h-56 w-40 bg-gray-200 flex items-center justify-center">
+                        <Book className="h-20 w-20 text-gray-400" />
+                    </div>
+                    )}
+                </div>
+                <div className="text-center w-full">
+                    <h4 className="font-medium text-lg mb-2 line-clamp-2 h-14">{book.title}</h4>
+                    <p className="text-sm text-gray-600 mb-2">{book.author}</p>
+                    <p className="text-xs text-gray-500">{book.publishedDate}</p>
+                </div>
+                </div>
+            ))}
+            </div>
+        </div>
+        )}
+
+        {/* No results message */}
+        {searchTerm && !loadingBooks && books.length === 0 && !error && (
+          <div className="text-center py-8">
+            <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-xl font-medium text-gray-600">No books found. Try another search term.</h3>
+          </div>
+        )}
       </section>
 
       {/* Error Message */}
@@ -649,25 +724,30 @@ const BookRecommender = () => {
           </h2>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {recommendations.map((book, index) => (
+            {recommendations.map((book) => (
               <div 
-                key={index} 
+                key={book.id} 
                 className="bg-white rounded-lg overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105"
               >
-                <div className="h-64 overflow-hidden">
-                  <img 
-                    src={book.image_url || "https://5.imimg.com/data5/IU/SQ/GD/SELLER-43618059/book-cover-page-design-1000x1000.jpg"} 
-                    alt={book.title || "Book cover"} 
-                    className="w-full h-full"
-                    onError={(e) => {
-                      e.target.src = "https://5.imimg.com/data5/IU/SQ/GD/SELLER-43618059/book-cover-page-design-1000x1000.jpg";
-                    }}
-                  />
+                <div className="h-64 overflow-hidden bg-gray-100 flex items-center justify-center">
+                  {book.image_url ? (
+                    <img 
+                      src={book.image_url} 
+                      alt={book.title} 
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <Book className="h-16 w-16 text-gray-400" />
+                  )}
                 </div>
                 <div className="p-4">
                   <h3 className="font-medium text-gray-900 text-lg line-clamp-2 h-14">
-                    {book.title || "Unknown Title"}
+                    {book.title}
                   </h3>
+                  <p className="text-sm text-gray-600 mb-3">{book.author}</p>
+                  <p className="text-xs text-gray-500 line-clamp-2 h-10">
+                    {book.description}
+                  </p>
                   <button className="mt-4 text-purple-600 hover:text-purple-800 font-medium flex items-center text-sm">
                     View Details
                     <ArrowRight className="ml-1 h-4 w-4" />
@@ -687,30 +767,22 @@ const BookRecommender = () => {
         </div>
       )}
 
-      {/* No Results Message */}
-      {selectedBook && !loading && recommendations.length === 0 && !error && (
-        <div className="text-center py-12">
-          <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-medium text-gray-600">No recommendations found. Try another book.</h3>
-        </div>
-      )}
-
       {/* Info Section */}
       <section className="bg-indigo-50 rounded-xl p-8 mt-8">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl font-semibold text-indigo-900 mb-4">How It Works</h2>
           <p className="text-gray-700 mb-6">
-            Our book recommendation system uses advanced similarity algorithms to suggest books based on your selection. 
-            These recommendations are tailored to provide reading experiences that complement your mental wellness journey.
+            Our book recommendation system uses the Google Books API to suggest books based on your selection. 
+            These recommendations are tailored to find books with similar themes, authors, and categories to enhance your reading experience.
           </p>
           <div className="grid md:grid-cols-3 gap-6">
             <div className="bg-white p-5 rounded-lg shadow">
               <div className="text-indigo-600 font-bold mb-2">Step 1</div>
-              <p className="text-gray-600">Select a book you've enjoyed reading</p>
+              <p className="text-gray-600">Search for a book you've enjoyed reading</p>
             </div>
             <div className="bg-white p-5 rounded-lg shadow">
               <div className="text-indigo-600 font-bold mb-2">Step 2</div>
-              <p className="text-gray-600">Click the "Get Recommendations" button</p>
+              <p className="text-gray-600">Select a book from the search results</p>
             </div>
             <div className="bg-white p-5 rounded-lg shadow">
               <div className="text-indigo-600 font-bold mb-2">Step 3</div>
