@@ -571,14 +571,14 @@ const BookRecommender = () => {
         <div className="flex justify-center mb-4">
           <Book className="h-16 w-16 text-purple-600" />
         </div>
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Book Recommendations</h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">Books</h1>
         <p className="text-lg text-gray-600 max-w-xl mx-auto">
           Discover books that inspire, comfort, and support your mental well-being journey.
         </p>
       </section>
 
       {/* Search Section */}
-      <section className="bg-purple-50 rounded-2xl p-8 shadow-lg mb-12">
+      <section className="bg-white-100 rounded-2xl p-8 shadow-lg mb-12 bg-gradient-to-t from-transparent to-green-200">
         <h2 className="text-2xl font-semibold text-gray-800 mb-6">Find Your Next Read</h2>
         
         <div className="max-w-xl mx-auto">
@@ -770,22 +770,22 @@ const BookRecommender = () => {
       {/* Info Section */}
       <section className="bg-indigo-50 rounded-xl p-8 mt-8">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-semibold text-indigo-900 mb-4">How It Works</h2>
+          <h2 className="text-2xl font-semibold text-black-900 mb-4">How It Works</h2>
           <p className="text-gray-700 mb-6">
             Our book recommendation system uses the Google Books API to suggest books based on your selection. 
             These recommendations are tailored to find books with similar themes, authors, and categories to enhance your reading experience.
           </p>
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-white p-5 rounded-lg shadow">
-              <div className="text-indigo-600 font-bold mb-2">Step 1</div>
+            <div className="bg-white p-5 rounded-lg bg-gradient-to-t from-transparent to-blue-200">
+              <div className="text-black-600 font-bold mb-2">Step 1</div>
               <p className="text-gray-600">Search for a book you've enjoyed reading</p>
             </div>
-            <div className="bg-white p-5 rounded-lg shadow">
-              <div className="text-indigo-600 font-bold mb-2">Step 2</div>
+            <div className="bg-white p-5 rounded-lg shadow  bg-gradient-to-t from-transparent to-green-200">
+              <div className="text-black-600 font-bold mb-2">Step 2</div>
               <p className="text-gray-600">Select a book from the search results</p>
             </div>
-            <div className="bg-white p-5 rounded-lg shadow">
-              <div className="text-indigo-600 font-bold mb-2">Step 3</div>
+            <div className="bg-white p-5 rounded-lg shadow  bg-gradient-to-t from-transparent to-yellow-200">
+              <div className="text-black-600 font-bold mb-2">Step 3</div>
               <p className="text-gray-600">Discover new books tailored to your taste</p>
             </div>
           </div>

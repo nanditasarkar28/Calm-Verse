@@ -247,7 +247,7 @@ const handleBookAppointment = async () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-indigo-900 mb-4">Find Your Mental Health Partner</h1>
+          <h1 className="text-4xl font-bold text-black-900 mb-4">Find Your Mental Health Partner</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Connect with professional therapists and schedule sessions to support your mental wellness journey.
           </p>
@@ -301,8 +301,8 @@ const handleBookAppointment = async () => {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left column - Therapist search and list */}
           <div className="lg:w-2/3">
-            <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-              <h2 className="text-2xl font-semibold text-indigo-900 mb-4">Find a Therapist</h2>
+            <div className="bg-white rounded-xl shadow-md p-6 mb-8  bg-gradient-to-t from-transparent to-blue-200" >
+              <h2 className="text-2xl font-semibold text-black-900 mb-4">Find a Therapist</h2>
               
               {/* Search and filters */}
               <div className="mb-6">
@@ -371,7 +371,7 @@ const handleBookAppointment = async () => {
                       className={`border rounded-lg overflow-hidden transition-all ${
                         selectedTherapist?._id === therapist._id
                           ? 'border-indigo-500 bg-indigo-50 shadow-md'
-                          : 'border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/30'
+                          : 'border-gray-200 hover:border-black-300 hover:bg-indigo-50/30'
                       }`}
                     >
                       <div className="p-6">
@@ -412,7 +412,7 @@ const handleBookAppointment = async () => {
                             <div className="flex items-center justify-between">
                               <p className="text-lg font-bold text-indigo-600">${therapist.hourly_rate}/hour</p>
                               <button
-                                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-md"
+                                className="px-4 py-2 bg-black-600 hover:bg-black-700 text-white font-medium rounded-md"
                                 onClick={() => handleTherapistSelect(therapist)}
                               >
                                 View Availability
@@ -424,7 +424,7 @@ const handleBookAppointment = async () => {
                       
                       {selectedTherapist?._id === therapist._id && (
                         <div className="border-t border-indigo-200 bg-indigo-50 p-6">
-                          <h4 className="text-lg font-medium text-indigo-900 mb-4">
+                          <h4 className="text-lg font-medium text-black-900 mb-4">
                             Available Appointments
                           </h4>
                           
@@ -486,8 +486,8 @@ const handleBookAppointment = async () => {
           
           {/* Right column - User appointments */}
           <div className="lg:w-1/3">
-            <div className="bg-white rounded-xl shadow-md p-6 sticky top-4">
-              <h2 className="text-2xl font-semibold text-indigo-900 mb-4">Your Appointments</h2>
+            <div className="bg-white rounded-xl shadow-md p-6 sticky top-4  bg-gradient-to-t from-transparent to-blue-200">
+              <h2 className="text-2xl font-semibold text-black-900 mb-4">Your Appointments</h2>
               
               {userAppointments.length === 0 ? (
                 <div className="text-center py-8">
@@ -547,8 +547,8 @@ const handleBookAppointment = async () => {
                 </div>
               )}
               
-              <div className="mt-8 pt-6 border-t border-gray-200">
-                <h3 className="font-medium text-indigo-900 mb-2">Need Help?</h3>
+              <div className="mt-8 pt-6 border-t border-gray-200 ">
+                <h3 className="font-medium text-black-900 mb-2">Need Help?</h3>
                 <p className="text-sm text-gray-600 mb-4">
                   If you need assistance with appointment scheduling or have questions about our therapists, please contact our support team.
                 </p>
